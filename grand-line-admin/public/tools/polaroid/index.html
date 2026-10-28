@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polaroid Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@500;700&family=Reenie+Beanie&family=Permanent+Marker&family=Patrick+Hand&family=Shadows+Into+Light&family=Homemade+Apple&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo"><i></i></span>
+    <span class="brand-name">Polaroid <b>Studio</b></span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btnAdd" title="Add photos">＋ Add photos</button>
+    <button class="btn ghost" id="btnTheme" title="Toggle dark / light">◐</button>
+    <button class="btn" id="btnExportCur">Export current</button>
+    <button class="btn primary" id="btnExportAll">Export all (ZIP)</button>
+  </div>
+</header>
+
+<main class="app">
+
+  <!-- LEFT : list of polaroids -->
+  <aside class="side left">
+    <div class="drop" id="dropzone">
+      <div class="drop-ico">🖼️</div>
+      <div><b>Drop photos here</b></div>
+      <small>or click · you can also paste (Ctrl/Cmd + V)</small>
+    </div>
+    <div class="row-btns">
+      <button class="btn small" id="btnEmpty">＋ Empty polaroid</button>
+      <button class="btn small ghost" id="btnClear">Remove all</button>
+    </div>
+    <ul id="list" class="list"></ul>
+    <p class="hint">Drag items in the list to re-order them.</p>
+  </aside>
+
+  <!-- CENTER : stage -->
+  <section class="center">
+    <div class="stage-bar">
+      <button class="btn small" id="btnPrev" title="Previous (←)">◀</button>
+      <span id="idx" class="idx">0 / 0</span>
+      <button class="btn small" id="btnNext" title="Next (→)">▶</button>
+      <span class="sep"></span>
+      <label class="zoomctl">View
+        <input type="range" id="stageZoom" min="0.4" max="3" step="0.01" value="1">
+      </label>
+      <button class="btn small ghost" id="btnFitView">Fit</button>
+      <span class="spacer"></span>
+      <button class="btn small" id="btnPreview">⤢ Preview</button>
+      <button class="btn small" id="btnGrid">▦ All polaroids</button>
+    </div>
+    <div class="stage" id="stageWrap">
+      <div class="empty" id="emptyState">
+        <div class="empty-card"></div>
+        <h2>Start by adding photos</h2>
+        <p>Each photo becomes its own polaroid. Choose the frame size, adjust, preview and export in high quality.</p>
+        <button class="btn primary" id="btnAdd2">＋ Add photos</button>
+      </div>
+      <canvas id="stage" hidden></canvas>
+    </div>
+    <div class="stage-foot" id="stageFoot">Drag the photo to move it · scroll wheel to zoom</div>
+  </section>
+
+  <!-- RIGHT : controls -->
+  <aside class="side right" id="controls">
+    <nav class="tabs">
+      <button class="tab active" data-tab="photo">Photo</button>
+      <button class="tab" data-tab="frame">Frame</button>
+      <button class="tab" data-tab="caption">Caption</button>
+      <button class="tab" data-tab="export">Export</button>
+    </nav>
+
+    <!-- PHOTO -->
+    <div class="panel active" data-panel="photo">
+      <div class="group">
+        <div class="btn-row">
+          <button class="btn small" id="btnReplace">Replace image</button>
+          <button class="btn small" id="btnFitPhoto">Reset position</button>
+        </div>
+        <label class="row"><span>Fit mode</span>
+          <select data-k="fit">
+            <option value="fill">Fill frame (crop)</option>
+            <option value="fit">Fit inside (no crop)</option>
+          </select>
+        </label>
+        <div id="photoSliders"></div>
+        <div class="btn-row">
+          <button class="btn small" id="rotL">⟲ 90°</button>
+          <button class="btn small" id="rotR">⟳ 90°</button>
+          <button class="btn small" id="flipH">⇋ Flip H</button>
+          <button class="btn small" id="flipV">⇅ Flip V</button>
+        </div>
+        <label class="row"><span>Background (fit mode)</span><input type="color" data-k="photoBg"></label>
+      </div>
+
+      <div class="group">
+        <h4>Filters</h4>
+        <div class="chips" id="chips"></div>
+        <div id="filterSliders"></div>
+        <div class="btn-row">
+          <button class="btn small ghost" id="resetFilters">Reset filters</button>
+          <button class="btn small" id="applyFilters">Apply to all</button>
+        </div>
+        <p class="hint" id="filterNote" hidden>Your browser does not support canvas filters (brightness, contrast…). Chrome, Edge, Firefox and recent Safari do.</p>
+      </div>
+    </div>
+
+    <!-- FRAME -->
+    <div class="panel" data-panel="frame">
+      <div class="group">
+        <label class="row"><span>Size</span>
+          <select id="framePreset"></select>
+        </label>
+        <div class="grid2">
+          <label class="field"><span>Outer width (cm)</span><input type="number" step="0.05" min="1" data-k="w"></label>
+          <label class="field"><span>Outer height (cm)</span><input type="number" step="0.05" min="1" data-k="h"></label>
+          <label class="field"><span>Photo width (cm)</span><input type="number" step="0.05" min="0.5" data-k="pw"></label>
+          <label class="field"><span>Photo height (cm)</span><input type="number" step="0.05" min="0.5" data-k="ph"></label>
+          <label class="field"><span>Top margin (cm)</span><input type="number" step="0.05" min="0" data-k="top"></label>
+        </div>
+        <p class="hint warn" id="frameWarn" hidden>The photo area does not fit inside the outer card.</p>
+        <div class="btn-row">
+          <button class="btn small" id="swapFrame">⟳ Rotate card 90°</button>
+        </div>
+        <p class="hint">The photo area is centred left-to-right. Bottom margin = height − top − photo height.</p>
+      </div>
+      <div class="group">
+        <h4>Style</h4>
+        <label class="row"><span>Card colour</span><input type="color" data-k="frameColor"></label>
+        <div class="swatches" id="swatches"></div>
+        <div id="frameSliders"></div>
+        <label class="check"><input type="checkbox" data-k="paper"> Soft paper sheen</label>
+        <label class="check"><input type="checkbox" data-k="edge"> Fine edge line around photo</label>
+        <div class="btn-row">
+          <button class="btn small" id="applyFrame">Apply size to all</button>
+          <button class="btn small" id="applyStyle">Apply style to all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="panel" data-panel="caption">
+      <div class="group">
+        <label class="field"><span>Caption (bottom strip)</span><input type="text" data-k="caption" maxlength="80" placeholder="Write something…"></label>
+        <p class="hint warn" id="capHint" hidden>This frame has almost no bottom margin, so there is no room for a caption. Use the 7.2 × 8.6 frame or increase the height in the Frame tab.</p>
+        <label class="row"><span>Font</span><select data-k="font" id="fontSel"></select></label>
+        <label class="row"><span>Text colour</span><input type="color" data-k="capColor"></label>
+        <div id="capSliders"></div>
+        <div class="btn-row">
+          <button class="btn small" id="capFromName">Use file name</button>
+          <button class="btn small" id="capNumber">Number all</button>
+          <button class="btn small" id="applyCaption">Apply font/colour to all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="panel" data-panel="export">
+      <div class="group">
+        <h4>Image export</h4>
+        <label class="row"><span>Format</span>
+          <select data-e="format">
+            <option value="png">PNG (lossless)</option>
+            <option value="jpeg">JPEG</option>
+            <option value="webp">WebP</option>
+            <option value="pdf">PDF (exact print size)</option>
+          </select>
+        </label>
+        <label class="row" id="qualRow"><span>Quality</span><input type="range" data-e="quality" min="0.5" max="1" step="0.01"><output data-eo="quality"></output></label>
+        <label class="row"><span>Resolution</span>
+          <select id="dpiSel">
+            <option value="150">150 DPI – web / draft</option>
+            <option value="300" selected>300 DPI – print</option>
+            <option value="600">600 DPI – high quality</option>
+            <option value="1200">1200 DPI – ultra</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </label>
+        <label class="row" id="dpiCustomRow" hidden><span>Custom DPI</span><input type="number" min="50" max="2400" step="10" id="dpiCustom" value="300"></label>
+        <label class="row"><span>Background</span>
+          <select data-e="bg">
+            <option value="transparent">Transparent (PNG / WebP)</option>
+            <option value="white">White</option>
+            <option value="custom">Custom colour</option>
+          </select>
+        </label>
+        <label class="row" id="bgColorRow" hidden><span>Colour</span><input type="color" data-e="bgColor"></label>
+        <label class="row"><span>Outer padding</span><input type="number" min="0" max="5" step="0.1" data-e="pad"><em>cm</em></label>
+        <label class="check"><input type="checkbox" data-e="shadow"> Add soft drop shadow (adds padding)</label>
+        <label class="row"><span>File name</span><input type="text" data-e="pattern" placeholder="polaroid-{n}"></label>
+        <p class="hint">Use <code>{n}</code> number, <code>{name}</code> photo name, <code>{size}</code> frame size.</p>
+        <label class="row"><span>Export all as</span>
+          <select data-e="bundle">
+            <option value="zip">One ZIP file</option>
+            <option value="files">Separate downloads</option>
+          </select>
+        </label>
+        <div class="info" id="exportInfo"></div>
+        <div class="btn-row">
+          <button class="btn primary" id="expCur">Export current</button>
+          <button class="btn primary" id="expAll">Export all</button>
+        </div>
+        <p class="hint">PNG and JPEG files carry the DPI tag, so they print at the exact physical size (e.g. 6.8 × 5.4 cm).</p>
+      </div>
+
+      <div class="group">
+        <h4>Print sheet</h4>
+        <p class="hint" style="margin-top:0">Arrange polaroids on one page, ready to print and cut.</p>
+        <label class="row"><span>Paper</span>
+          <select data-e="paper">
+            <option value="a4">A4</option><option value="a3">A3</option><option value="a5">A5</option>
+            <option value="letter">US Letter</option>
+            <option value="4x6">4 × 6 in</option><option value="5x7">5 × 7 in</option><option value="6x8">6 × 8 in</option>
+          </select>
+        </label>
+        <label class="row"><span>Orientation</span>
+          <select data-e="orient"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
+        </label>
+        <label class="row"><span>Which</span>
+          <select data-e="sheetScope"><option value="all">All polaroids</option><option value="current">Current only</option></select>
+        </label>
+        <label class="row"><span>Copies each</span><input type="number" min="1" max="50" step="1" data-e="copies"></label>
+        <label class="row"><span>Margin</span><input type="number" min="0" max="5" step="0.1" data-e="margin"><em>cm</em></label>
+        <label class="row"><span>Gap</span><input type="number" min="0" max="3" step="0.1" data-e="gap"><em>cm</em></label>
+        <label class="check"><input type="checkbox" data-e="marks"> Crop marks for cutting</label>
+        <label class="row"><span>Output</span>
+          <select data-e="sheetFormat"><option value="pdf">PDF</option><option value="png">PNG (ZIP if many pages)</option><option value="jpeg">JPEG (ZIP if many pages)</option></select>
+        </label>
+        <div class="btn-row">
+          <button class="btn" id="sheetPreview">Preview sheet</button>
+          <button class="btn primary" id="sheetExport">Export sheet</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Preview / grid / sheet modal -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-top">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-actions">
+      <button class="btn small" id="mPrev">◀</button>
+      <button class="btn small" id="mNext">▶</button>
+      <button class="btn small" id="mGrid">▦ All</button>
+      <button class="btn small" id="mExport">Export this</button>
+      <button class="btn small ghost" id="mClose">✕ Close</button>
+    </div>
+  </div>
+  <div class="modal-body" id="modalBody"></div>
+</div>
+
+<div class="toast" id="toast" hidden>
+  <div id="toastText">Working…</div>
+  <div class="bar"><i id="toastBar"></i></div>
+</div>
+
+<div class="dragover" id="dragOver" hidden><div>Drop photos to add them</div></div>
+
+<input type="file" id="fileInput" accept="image/*" multiple hidden>
+<input type="file" id="replaceInput" accept="image/*" hidden>
+
+<script src="js/app.js"></script>
+</body>
+</html>

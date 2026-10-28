@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE GRAND LINE · Admin</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<aside class="side">
+  <div class="brand"><span class="brand-top">THE</span><span class="brand-main">GRAND LINE</span><span class="brand-sub">Admin</span></div>
+  <nav id="nav">
+    <a href="#/dashboard" data-page="dashboard"><i>📊</i><span>Dashboard</span></a>
+    <a href="#/billing" data-page="billing"><i>🧾</i><span>Billing</span></a>
+    <a href="#/stock" data-page="stock"><i>📦</i><span>Stock</span></a>
+    <a href="#/polaroid" data-page="polaroid"><i>📷</i><span>Polaroid Maker</span></a>
+    <a href="#/pdf" data-page="pdf"><i>🖨️</i><span>UPS PDF Maker</span></a>
+    <a href="#/enhancer" data-page="enhancer"><i>✨</i><span>Image Enhancer</span></a>
+    <a href="#/settings" data-page="settings"><i>⚙️</i><span>Settings</span></a>
+  </nav>
+  <button id="collapse" title="Hide / show menu">◀</button>
+</aside>
+
+<main class="main">
+  <section id="view"></section>
+  <section id="tool-polaroid" class="tool" hidden>
+    <iframe title="Polaroid Maker" data-src="tools/polaroid/index.html" allow="clipboard-read; clipboard-write; fullscreen"></iframe>
+    <a class="btn small tool-open" href="tools/polaroid/index.html" target="_blank">Open in new tab ↗</a>
+  </section>
+  <section id="tool-pdf" class="tool" hidden>
+    <iframe title="UPS PDF Maker" data-src="tools/pdf/index.html" allow="fullscreen"></iframe>
+    <a class="btn small tool-open" href="tools/pdf/index.html" target="_blank">Open in new tab ↗</a>
+  </section>
+</main>
+
+<div id="toast" role="status"></div>
+<dialog id="dlg"></dialog>
+
+<script src="lib/chart.umd.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

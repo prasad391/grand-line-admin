@@ -1,0 +1,13 @@
+{
+  "name": "grand-line-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "THE GRAND LINE admin dashboard: sales, billing, stock, Polaroid maker, UPS PDF generator",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "better-sqlite3": "^12.0.0",
+    "express": "^4.21.0"
+  }
+}

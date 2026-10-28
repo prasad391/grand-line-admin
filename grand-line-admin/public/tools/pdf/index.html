@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sheet Maker – Folder to 13×19 PDF</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section class="controls">
+    <h1>Sheet Maker</h1>
+    <p class="sub">Pick a folder of images. Get a 13 × 19 in PDF with equal-split layouts and cut marks.</p>
+
+    <label class="field">
+      <span>1. Image folder</span>
+      <input type="file" id="folder" webkitdirectory multiple>
+      <small id="folderInfo">No folder selected</small>
+    </label>
+
+    <div class="row">
+      <label class="field">
+        <span>2. Page orientation</span>
+        <select id="orient">
+          <option value="portrait" selected>Portrait (13 × 19 in)</option>
+          <option value="landscape">Landscape (19 × 13 in)</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Copies of each image</span>
+        <input type="number" id="copies" value="1" min="1" max="50" step="1">
+      </label>
+    </div>
+
+    <label class="field">
+      <span>3. Images per page</span>
+      <select id="layout"></select>
+      <small>Grid is columns × rows</small>
+    </label>
+
+    <div class="row">
+      <label class="field">
+        <span>Outer margin (in)</span>
+        <input type="number" id="margin" value="0.5" min="0.25" max="2" step="0.05">
+      </label>
+      <label class="field">
+        <span>Gap between images (in)</span>
+        <input type="number" id="gap" value="0" min="0" max="1" step="0.05">
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Image fit</span>
+      <select id="fit">
+        <option value="fit" selected>Fit inside cell (nothing cropped)</option>
+        <option value="fill">Fill cell (crops the edges)</option>
+      </select>
+    </label>
+
+    <label class="check">
+      <input type="checkbox" id="rotate">
+      Auto-rotate images 90° when it fits the cell better
+    </label>
+
+    <button id="make" disabled>Create PDF</button>
+    <progress id="bar" value="0" max="100" hidden></progress>
+    <p id="status" role="status"></p>
+    <a id="again" hidden>Download didn't start? Click here to save the PDF.</a>
+  </section>
+
+  <section class="preview">
+    <h2 id="previewTitle">Page preview</h2>
+    <div id="pages"></div>
+    <p class="note">Red lines are the cut marks. The PDF uses your original image quality; this preview uses small thumbnails.</p>
+  </section>
+</main>
+
+<script src="lib/pdf-lib.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
