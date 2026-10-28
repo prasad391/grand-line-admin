@@ -17,11 +17,14 @@ const PORT = Number(process.env.PORT) || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 // ---- database ----
-const DATA_DIR = path.join(__dirname, 'data');
+// Temporary database location for Vercel.
+// WARNING: Data is not persistent in this location.
+const DATA_DIR = path.join(os.tmpdir(), 'grand-line-admin');
 fs.mkdirSync(DATA_DIR, { recursive: true });
+
 const DB_FILE = path.join(DATA_DIR, 'grandline.db');
 const db = new Database(DB_FILE);
-db.pragma('journal_mode = WAL');
+
 db.pragma('foreign_keys = ON');
 db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
 
